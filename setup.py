@@ -15,6 +15,7 @@ setuptools.setup(
     long_description=long_description,
     url="https://github.com/wallento/cocomod-uart",
     packages=["cocomod.uart"],
+    install_requires=['cocotb'],
     setup_requires=[
         'setuptools_scm',
     ],
