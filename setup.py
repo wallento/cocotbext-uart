@@ -4,17 +4,17 @@ with open("README.rst", "r") as fh:
     long_description = fh.read()
 
 setuptools.setup(
-    name="cocomod-uart",
+    name="cocotbext-uart",
     use_scm_version={
         "relative_to": __file__,
-        "write_to": "cocomod/uart/version.py",
+        "write_to": "cocotbext/uart/version.py",
     },
     author="Stefan Wallentowitz",
     author_email="stefan@wallentowitz.de",
     description="Cocotb UART modules",
     long_description=long_description,
-    url="https://github.com/wallento/cocomod-uart",
-    packages=["cocomod.uart"],
+    url="https://github.com/wallento/cocotbext-uart",
+    packages=["cocotbext.uart"],
     install_requires=['cocotb'],
     setup_requires=[
         'setuptools_scm',
