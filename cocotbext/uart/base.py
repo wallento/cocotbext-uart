@@ -55,7 +55,7 @@ class UARTConfig(object):
 
 class UARTModule(Driver, Monitor):
     def __init__(self, config, signals, clk, *, clk_freq=None):
-        self.log = SimLog("cocomod.uart.{}".format(self.__class__.__name__))
+        self.log = SimLog("cocotbext.uart.{}".format(self.__class__.__name__))
 
         self.config = config
         self.clk = clk.signal
