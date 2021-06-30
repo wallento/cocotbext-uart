@@ -1,6 +1,7 @@
+import logging
 from collections import namedtuple
 
-from cocotb import SimLog, coroutine
+from cocotb import coroutine
 from cocotb.drivers import Driver
 from cocotb.monitors import Monitor
 from cocotb.result import TestError
@@ -28,7 +29,8 @@ def parity(data, bits, parity):
 
 
 class UARTConfig(object):
-    def __init__(self, *, bits=8, parity=UARTParity.NONE, stopbits=1, baud=115200, flow_control=UARTFlowControl.NONE):
+    def __init__(self, *, bits=8, parity=UARTParity.NONE, stopbits=1,
+                baud=115200, flow_control=UARTFlowControl.NONE):
         self.bits = bits
         self.parity = parity
         self.stopbits = stopbits
@@ -55,7 +57,8 @@ class UARTConfig(object):
 
 class UARTModule(Driver, Monitor):
     def __init__(self, config, signals, clk, *, clk_freq=None):
-        self.log = SimLog("cocotbext.uart.{}".format(self.__class__.__name__))
+        self.log = logging.getLogger(__name__)
+        self.log.info("cocotbext.uart.{}".format(self.__class__.__name__))
 
         self.config = config
         self.clk = clk.signal
