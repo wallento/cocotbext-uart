@@ -31,13 +31,13 @@ Sending value
 Here an example to send data with uart protocol to a DUT module with only input
 Rx uart pin named RxBit
 
-First, import following :
+First, import following ::
 
     from cocotbext.uart import UARTConfig
     from cocotbext.uart import UARTModule
     from cocotbext.uart import UARTSignals
 
-Then instanciate the config class, NameTuple signals and the module:
+Then instanciate the config class, NameTuple signals and the module::
 
     class MyBench(object):
         def __init__(self, dut):
@@ -51,7 +51,7 @@ Then instanciate the config class, NameTuple signals and the module:
                             signals=self._uartsig,
                             clk=self._clock)
 
-Once all declarations/instanciations done, send a value in test function:
+Once all declarations/instanciations done, send a value in test function::
 
     @cocotb.test()
     async def test_simple(dut):
