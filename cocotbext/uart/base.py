@@ -1,7 +1,6 @@
 import logging
 from collections import namedtuple
 
-from cocotb import coroutine
 from cocotb.drivers import Driver
 from cocotb.monitors import Monitor
 from cocotb.result import TestError
@@ -83,35 +82,33 @@ class UARTModule(Driver, Monitor):
         Driver.__init__(self)
         Monitor.__init__(self)
 
-    @coroutine
-    def _driver_send(self, transaction, sync=True, **kwargs):
+    async def _driver_send(self, transaction, sync=True, **kwargs):
         if self.config.flow_control == UARTFlowControl.HARDWARE and self.rtsn == 1:
-            yield FallingEdge(self.rtsn)
+            await FallingEdge(self.rtsn)
 
         if sync:
-            yield (RisingEdge(self.clk))
+            await (RisingEdge(self.clk))
 
         # Start bit
         self.tx <= 0
-        yield Timer(self.duration)
+        await Timer(self.duration)
 
         # Bits
         for b in range(self.config.bits):
             self.tx <= ((transaction >> b) & 0x1)
-            yield Timer(self.duration)
+            await Timer(self.duration)
 
         # Parity
         if self.config.parity != UARTParity.NONE:
             self.tx <= parity(transaction, self.config.bits, self.config.parity)
-            yield Timer(self.duration)
+            await Timer(self.duration)
 
         # Stop bit(s)
         for b in range(self.config.stopbits):
             self.tx <= 1
-            yield Timer(self.duration)
+            await Timer(self.duration)
 
-    @coroutine
-    def _monitor_recv(self):
+    async def _monitor_recv(self):
         while True:
             data = 0
 
@@ -119,10 +116,10 @@ class UARTModule(Driver, Monitor):
                 self.ctsn <= 0
 
             # Wait for start of character
-            yield FallingEdge(self.rx)
+            await FallingEdge(self.rx)
 
             # Sample on the center of the start bit
-            yield Timer(self.duration/2)
+            await Timer(self.duration/2)
 
             # Malformed start bit
             if self.rx != 0:
@@ -130,19 +127,19 @@ class UARTModule(Driver, Monitor):
 
             # Sample all bits
             for b in range(self.config.bits):
-                yield Timer(self.duration)
+                await Timer(self.duration)
                 if self.rx == 1:
                     data = data | (1 << b)
 
             # Parity
             if self.config.parity != UARTParity.NONE:
-                yield Timer(self.duration)
+                await Timer(self.duration)
                 if self.rx != parity(data, self.config.bits, self.config.parity):
                     raise TestError("parity error")
 
             # Stopbit(s)
             for b in range(self.config.stopbits):
-                yield Timer(self.duration)
+                await Timer(self.duration)
                 if self.rx != 1:
                     raise TestError("stop bit error")
 
